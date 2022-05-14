@@ -1,4 +1,4 @@
-using Markdown:parse
+using Markdown
 using Markdown:Paragraph,Header,Code,Footnote,BlockQuote,Admonition,List,HorizontalRule
 using Markdown:Italic,Bold,Image,Link,LineBreak
 function ify_md(s::String)
@@ -7,9 +7,8 @@ function ify_md(s::String)
 end
 function ify_s(s::String)
 	t=replace(s,"<"=>"&lt;")
-	replace!(t,">"=>"&gt;")
-	replace!(t,"\""=>"&quot;")
-	return t
+	t=replace(t,">"=>"&gt;")
+	return replace(t,"\""=>"&quot;")
 end
 # global
 ify(s::String)="<p>$(ify_s(s))</p>"
@@ -42,7 +41,7 @@ function ify(f::Footnote)
 	if f.text === nothing
 		return "<sup><a href=\"#footnote-$(f.id)\">$(f.id)</a></sup>"
 	else
-		return "<p id=\"footnote-$(f.id)\">$(f.id)</p>"*ify(p.text)
+		return "<p id=\"footnote-$(f.id)\">$(f.id)</p>"*ify(f.text)
 	end
 end
 function ify(b::BlockQuote)
@@ -53,13 +52,13 @@ function ify(l::List)
 	if l.ordered==-1
 		s="<ul>"
 		for el in l.items
-			s*=ify(el)
+			s*="<li>$(ify(el))</li>"
 		end
 		return s*"</ul>"
 	else
 		s="<ol>"
 		for el in l.items
-			s*=ify(el)
+			s*="<li>$(ify(el))</li>"
 		end
 		return s*"</ol>"
 	end
