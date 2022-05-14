@@ -1,0 +1,18 @@
+.language-julia{
+	background-color: whitesmoke;
+}
+.repl-code{
+	color:green;
+}
+.repl-help{
+	color: lightyellow;
+}
+.repl-pkg{
+	color: blue;
+}
+.repl-shell{
+	color: red;
+}
+.comment{
+	color:darkolivegreen;
+}

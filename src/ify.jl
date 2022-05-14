@@ -1,6 +1,7 @@
 using Markdown
 using Markdown:Paragraph,Header,Code,Footnote,BlockQuote,Admonition,List,HorizontalRule
 using Markdown:Italic,Bold,Image,Link,LineBreak
+include("jlcode.jl")
 function ify_md(s::String)
 	md=Markdown.parse(s)
 	return ify(md.content)
@@ -33,6 +34,7 @@ function ify(c::Code)
 	if la=="" # 推测为行内
 		return "<code>$co</code>"
 	elseif la=="jl"
+		return "<pre class=\"language-julia\">$(jlcode(co))</pre>"
 	else
 		return "<pre class=\"language-$la\">$(replace(co,"\n"=>"<br />"))</pre>"
 	end
