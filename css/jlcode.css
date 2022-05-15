@@ -34,9 +34,6 @@
 .insert{
 	color: blue;
 }
-.regex{
-	color: darkred;
-}
 .plain{
 	color: wheat
 }
@@ -48,4 +45,7 @@
 }
 .number{
 	color: yellowgreen;
+}
+.type{
+	color:forestgreen;
 }
