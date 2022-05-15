@@ -13,6 +13,39 @@
 .repl-shell{
 	color: red;
 }
+.repl-error{
+	color: red;
+}
 .comment{
 	color:darkolivegreen;
+}
+.string{
+	color: brown;
+}
+.keyword{
+	color:purple;
+}
+.special{
+	color: blue;
+}
+.escape{
+	color:goldenrod;
+}
+.insert{
+	color: blue;
+}
+.regex{
+	color: darkred;
+}
+.plain{
+	color: wheat
+}
+.macro{
+	color: gold;
+}
+.function{
+	color: yellow;
+}
+.number{
+	color: yellowgreen;
 }
