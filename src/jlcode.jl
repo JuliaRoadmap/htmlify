@@ -28,7 +28,7 @@ function jlcode(co::String)
 	2	`
 	3	"""
 	=#
-	len=length(co)
+	sz=thisind(co,sizeof(co))
 	pre=1
 	i=1
 	emp=false
@@ -39,7 +39,7 @@ function jlcode(co::String)
 	end
 	try
 
-	while i<=len
+	while i<=sz
 		ch=co[i]
 		emp=isempty(stack)
 		emp2=emp || last(stack)==0x0
@@ -80,13 +80,31 @@ function jlcode(co::String)
 			i+=1
 			ch=co[i]
 		end
-		if emp2 && Base.is_id_start_char(ch) # 推测是变量等
+		if emp2 && 'A'<=ch<='Z' # 推测是类型
+			dealf()
 			j=i+1
-			while j<=len
-				if !Base.is_id_char(co[j])
+			st=0
+			while j<=sz
+				if co[j]=='{' st+=1
+				elseif co[j]=='}'
+					st==0 ? break : st-=1
+				elseif !Base.is_id_char(co[j])
 					break
 				end
-				j+=1
+				j=nextind(co,j)
+			end
+			if j>sz
+				s*=col(co[i:sz],"type")
+				break
+			else
+				s*=col(co[i:prevind(co,j)],"type")
+				i=j
+				pre=j
+			end
+		elseif emp2 && Base.is_id_start_char(ch) # 推测是变量等
+			j=nextind(co,i)
+			while j<=sz && Base.is_id_char(co[j])
+				j=nextind(co,j)
 			end
 			str=co[i:j-1]
 			if in(str,keywords)
@@ -95,44 +113,22 @@ function jlcode(co::String)
 			elseif in(str,specials) || (repl && str=="ans")
 				dealf()
 				s*=col(str,"special")
-			elseif j>len
-				s*=col(co[pre:len],"plain")
+			elseif j>sz
+				s*=col(co[pre:sz],"plain")
 				break
 			elseif co[j]=='('
 				dealf()
 				s*=col(str,"function")
 			else
-				s*=col(co[pre:j-1],"plain")
+				s*=col(co[pre:prevind(co,j)],"plain")
 			end
 			i=j
 			pre=j
-		elseif emp2 && 'A'<=ch<='Z' # 推测是类型
-			dealf()
-			j=i+1
-			st=0
-			while j<=len
-				if co[j]=='{' st+=1
-				elseif co[j]=='}'
-					st==0 ? break : st-=1
-				elseif !Base.is_id_char(co[j])
-					break
-				end
-				j+=1
-			end
-			if j>len
-				s*=col(co[i:len],"type")
-				break
-			else
-				s*=col(co[i:j-1],"type")
-				i=j
-				pre=j
-			end
 		elseif ch=='\"'
-			la=last(stack)
-			if emp || la==0x0 # 新字符串
+			if emp || last(stack)==0x0 # 新字符串
 				dealf()
 				if co[i+1]=='"'
-					if i+1==len # 末尾&空
+					if i+1==sz # 末尾&空
 						s*=col("\"\"","string")
 						break
 					elseif co[i+2]!='"' # 空字符串
@@ -147,9 +143,9 @@ function jlcode(co::String)
 					push!(stack,0x1)
 					i+=1
 				end
-			elseif la==0x1
-				if i==len # 末尾
-					s*=col(co[pre:len],"string")
+			elseif last(stack)==0x1
+				if i==sz # 末尾
+					s*=col(co[pre:sz],"string")
 					break
 				else
 					s*=col(co[pre:i],"string")
@@ -157,8 +153,8 @@ function jlcode(co::String)
 					pre=i
 					pop!(stack)
 				end
-			elseif la==0x3
-				if i>len-2 break end
+			elseif last(stack)==0x3
+				if i>sz-2 break end
 				if co[i+1]=='"' && co[i+2]=='"'
 					s*=col(co[pre:i+2],"string")
 					i+=3
@@ -167,24 +163,26 @@ function jlcode(co::String)
 				else
 					i+=1
 				end
-			elseif la==0x2
+			elseif last(stack)==0x2
 				i+=1
 			end
 		elseif emp2 && ch=='\''
 			dealf()
-			if j>len-2 break end
+			if i>sz-2 break end
 			if ch[i+1]=='\\'
-				s*=col(co[i:i+3],"string")
-				i+=4
+				j=nextind(co,i+2)
+				s*=col(co[i:j],"string")
+				i=j+1
 			else
-				s*=col(co[i:i+2],"string")
-				i+=3
+				j=nextind(co,i+1)
+				s*=col(co[i:j],"string")
+				i=j+1
 			end
 			pre=i
 		elseif !emp2 && ch=='\\'
 			dealf()
 			s*=col(co[i:i+1],"escape")
-			i+=2
+			i=nextind(co,i+1)
 			pre=i
 		elseif ch=='$'
 			j=i+1
@@ -194,19 +192,15 @@ function jlcode(co::String)
 				push!(stack,0x0)
 				i+=2
 			elseif Base.is_id_start_char(ch[j])
-				j+=1
-				while j<=len
-					if Base.is_id_char(ch[j])
-						j+=1
-					else
-						break
-					end
+				j=nextind(co,j)
+				while j<=sz && Base.is_id_char(ch[j])
+					j=nextind(co,j)
 				end
-				if j>len
-					s*=col(co[i:len],"insert")
+				if j>sz
+					s*=col(co[i:sz],"insert")
 					break
 				else
-					s*=col(co[i:j-1],"insert")
+					s*=col(co[i:prevind(co,j)],"insert")
 					i=j
 					pre=j
 				end
@@ -216,19 +210,15 @@ function jlcode(co::String)
 		elseif emp2 && ch=='@'
 			j=i+1
 			if Base.is_id_start_char(ch[j])
-				j+=1
-				while j<=len
-					if Base.is_id_char(ch[j])
-						j+=1
-					else
-						break
-					end
+				j=nextind(co,j)
+				while j<=sz && Base.is_id_char(ch[j])
+					j=nextind(co,j)
 				end
-				if j>len
-					s*=col(co[i:len],"macro")
+				if j>sz
+					s*=col(co[i:sz],"macro")
 					break
 				else
-					s*=col(co[i:j-1],"macro")
+					s*=col(co[i:prevind(co,j)],"macro")
 					i=j
 					pre=j
 				end
@@ -247,44 +237,47 @@ function jlcode(co::String)
 			pre=i
 		elseif emp2 && '0'<=ch<='9' # 推测是数字
 			dealf()
-			j=i+1
-			if j!=len && (co[j]=='x' || co[j]=='o') j+=1 end
-			while j<=len
-				if '0'<=co[j]<='9' || 'a'<=co[j]<='f' || co[j]=='_'
-					j+=1
-				else
-					break
-				end
+			if i==sz
+				s*=col("$ch","number")
+				break
 			end
-			if j>len
-				s*=col(co[i:len],"number")
+			j=i+1
+			if j!=sz && (co[j]=='x' || co[j]=='o') j+=1 end
+			while j<=sz && ('0'<=co[j]<='9' || 'a'<=co[j]<='f' || co[j]=='_')
+				j+=1
+			end
+			if j>sz
+				s*=col(co[i:sz],"number")
 				break
 			else
-				s*=col(co[i:j-1],"number")
+				s*=col(co[i:prevind(co,j)],"number")
 				i=j
 				pre=j
 			end
 		elseif emp2 && ch=='#'
 			dealf()
-			if i==len
+			if i==sz
 				s*=col("#","comment")
 				break
 			elseif co[i+1]=='=' # 多行注释
 				f=findnext("=#",co,i+2)
-				if f===nothing s*=col(co[i:end],"comment")
+				if f===nothing
+					s*=col(co[i:sz],"comment")
+					break
 				else
 					s*=col(co[i:f.stop],"comment")
 					i=f.stop+1
+					pre=i
 				end
 			else
-				f=findnext("\n",co,i+1)
+				f=findnext('\n',co,i+1)
 				if f===nothing
-					s*=col(co[i:end],"comment")
+					s*=col(co[i:sz],"comment")
 					break
 				else
-					s*=col(co[i:f.stop-1];br=false)
+					s*=col(co[i:prevind(co,f)],"comment";br=false)
 					s*="<br />"
-					i=f.stop+1
+					i=f+1
 				end
 			end
 			pre=i
@@ -300,7 +293,7 @@ function jlcode(co::String)
 
 	catch er
 		if isa(er,BoundsError)
-			dealf(len)
+			dealf(sz)
 			return s
 		else
 			throw(er)

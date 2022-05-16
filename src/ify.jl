@@ -1,6 +1,7 @@
 using Markdown
 using Markdown:Paragraph,Header,Code,Footnote,BlockQuote,Admonition,List,HorizontalRule
 using Markdown:Italic,Bold,Image,Link,LineBreak
+using Markdown:Table
 include("jlcode.jl")
 function ify_md(s::String)
 	md=Markdown.parse(s)
@@ -87,3 +88,23 @@ function ify(l::Link)
 	return "<a href=\"$(url)\">$htm</a>"
 end
 ify(::LineBreak)="<br />"
+# table
+function ify(t::Table)
+	s="<table>"
+	fi=true
+	for v in t.rows
+		s*="<tr>"
+		if fi
+			fi=false
+			for st in v
+				s*="<th>$(ify(st))</th>"
+			end
+		else
+			for st in v
+				s*="<td>$(ify(st))</td>"
+			end
+		end
+		s*="</tr>"
+	end
+	return s*"</table>"
+end
