@@ -1,14 +1,15 @@
 .language-julia{
 	background-color: whitesmoke;
+	font-family: 'Courier New', Courier, monospace;
 }
 .repl-code{
 	color:green;
 }
 .repl-help{
-	color: lightyellow;
+	color: wheat;
 }
 .repl-pkg{
-	color: blue;
+	color: rgb(16,64,224);
 }
 .repl-shell{
 	color: red;
@@ -26,22 +27,22 @@
 	color:purple;
 }
 .special{
-	color: blue;
+	color: royalblue;
 }
 .escape{
-	color:goldenrod;
+	color: goldenrod;
 }
 .insert{
-	color: blue;
+	color: skyblue;
 }
 .plain{
-	color: wheat
+	color: darkgray;
 }
 .macro{
 	color: gold;
 }
 .function{
-	color: yellow;
+	color: darkgoldenrod;
 }
 .number{
 	color: yellowgreen;
