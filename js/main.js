@@ -100,9 +100,19 @@ require(['jquery'], function ($) {
 })
 // theme设置
 require(['jquery'],function($){
+	$(document).ready(function(){
+		var tURL=$("#tURL")[0].content
+		var theme=localStorage.getItem("theme")
+		if(theme==undefined)theme="light"
+		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+	})
+})
+require(['jquery'],function($){
 	var tURL=$("#tURL")[0].content
 	var pi=$("#documenter-themepicker")
 	pi.bind('change',function(){
-		$("#theme-href")[0].href=tURL+"css/"+pi[0].value+".css"
+		var theme=pi[0].value
+		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+		localStorage.setItem("theme",theme)
 	})
 })

@@ -50,7 +50,18 @@ end
 function ify(b::BlockQuote)
 	return "<blockquote>$(ify(b.content))</blockquote>"
 end
-ify(a::Admonition)="<div class=\"admonition is-$(a.category)\"><header class=\"admonition-header\">$(ify_s(a.title))</header><div class=\"admonition-content\">$(ify(a.content))</div></div>"
+function ify(a::Admonition)
+	cat=a.category
+	title=a.title
+	if cat=="note"
+		cat="info"
+		title=="" && title="关于"
+	elseif cat=="warn"
+		cat="warning"
+		title=="" && title="注意"
+	end
+	"<div class=\"admonition is-$cat\"><header class=\"admonition-header\">$title</header><div class=\"admonition-content\">$(ify(a.content))</div></div>"
+end
 function ify(l::List)
 	if l.ordered==-1
 		s="<ul>"
@@ -75,6 +86,9 @@ function ify(l::Link)
 	htm=ify(l.text)
 	url=l.url
 	# 特殊处理
+	if startswith(url,"#")
+		return "<a href=\"$url\">$htm</a>"
+	end
 	if !startswith(url,"https://")
 		ma=findfirst(r".md(#.*)?$",url)
 		if ma!==nothing
@@ -85,7 +99,7 @@ function ify(l::Link)
 			url=url[1:ma.stop-1]
 		end
 	end
-	return "<a href=\"$(url)\">$htm</a>"
+	return "<a href=\"$(url)\" target=\"_blank\">$htm</a>"
 end
 ify(::LineBreak)="<br />"
 # table
