@@ -4,8 +4,16 @@ using Markdown:Italic,Bold,Image,Link,LineBreak
 using Markdown:Table
 include("jlcode.jl")
 function ify_md(s::String)
+	s=replace(s,"\r"=>"")
 	md=Markdown.parse(s)
 	return ify(md.content)
+end
+function md_withtitle(s::String)
+	s=replace(s,"\r"=>"")
+	md=Markdown.parse(s)
+	ti=md.content[1]
+	typeassert(ti,Markdown.Header{1})
+	return (ify(md.content),ti.text[1])
 end
 function ify_s(s::String)
 	t=replace(s,"<"=>"&lt;")

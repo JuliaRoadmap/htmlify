@@ -21,7 +21,6 @@ end
 * 正则表达式
 =#
 function jlcode(co::String)
-	co=replace(co,"\r"=>"")
 	repl=false
 	s=""
 	stack=Vector{UInt8}()
