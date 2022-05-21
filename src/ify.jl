@@ -48,9 +48,9 @@ function ify(f::Footnote)
 	end
 end
 function ify(b::BlockQuote)
-	return "<blockquote>$(ify(b))</blockquote>"
+	return "<blockquote>$(ify(b.content))</blockquote>"
 end
-ify(a::Admonition)="<div class=\"admonition $(a.category)\"><p class=\"admonition-title\">$(ify_s(a.title))</p><p>$(ify(a.content))</p></div>"
+ify(a::Admonition)="<div class=\"admonition is-$(a.category)\"><header class=\"admonition-header\">$(ify_s(a.title))</header><div class=\"admonition-content\">$(ify(a.content))</div></div>"
 function ify(l::List)
 	if l.ordered==-1
 		s="<ul>"
