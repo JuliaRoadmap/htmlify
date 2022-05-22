@@ -4,10 +4,10 @@ mutable struct Node
 	par::Union{Node,Nothing}
 	name::String
 	toml::Dict
-	dirs::Dict{String,Node}
+	dirs::Dict{String,Pair{Node,String}}
 	files::Dict{String,Pair{String,String}} # mds,title
 end
-Node(par::Union{Node,Nothing},name::String,toml::Dict=Dict())=Node(par,name,toml,Dict{String,Node}(),Dict{String,Pair{String,String}}())
+Node(par::Union{Node,Nothing},name::String,toml::Dict=Dict())=Node(par,name,toml,Dict{String,Pair{Node,String}}(),Dict{String,Pair{String,String}}())
 function generate_recursively(srcdir::AbstractString,tardir::AbstractString)
 	endswith(srcdir,"/") || srcdir*="/"
 	endswith(tardir,"/") || tardir*="/"
@@ -23,14 +23,19 @@ function generate_recursively(srcdir::AbstractString,tardir::AbstractString)
 	# docs
 	root=Node(nothing,"")
 	cd(srcdir*"docs")
-	_gen_rec(;current=root,path="",pathv=[""],srcdir=srcdir*"docs/",tardir=tardir*"docs/")
+	_gen_rec(;current=root,outline=true,path="",pathv=[""],srcdir=srcdir*"docs/",tardir=tardir*"docs/")
+	# menu
+	io=open(tardir*"js/menu.js")
+	print(io,"const menu=`",makemenu(root),"`")
+	close(io)
 end
 function _gen_rec(;
 	current::Node,
+	outline::Bool,
 	path::String,
 	pathv::Vector{String},
 	srcdir::String,
-	tardir::String)
+	tardir::String,)
 	# 准备
 	mkpath(tardir*path)
 	# TOML
@@ -55,20 +60,64 @@ function _gen_rec(;
 			end
 			close(io)
 			if flag
-				current.files[it]=pair
+				current.files[pre]=pair
 			end
 		else # isdir
 			node=Node(current,it)
+			current.dirs[it]=Pair(node,current.toml["names"][it])
 			push!(pathv,it)
 			cd("it")
-			_gen_rec(current=node,path="$(path)$(it)/",pathv=pathv,srcdir=srcdir,tardir=tardir)
+			o=outline || (haskey(toml,"outline") && in(it,@inbounds(toml["outline"])))
+			_gen_rec(current=node,outline=o,path="$(path)$(it)/",pathv=pathv,srcdir=srcdir,tardir=tardir)
 		end
 	end
 	# 生成文件
 	for pa in current.files
+		const repo="https://github.com/JuliaRoadmap/zh/"
+		name=pa.first
+		title=pa.second.second
+		prevpage=""
+		nextpage=""
+		if ouline && haskey(toml,"outline")
+			vec=@inbounds toml["outline"]
+			len=length(vec)
+			for i in 1:len
+				if i==name
+					if i!=1
+						previd=@inbounds(vec[i-1])
+						ptitle=current.files[previd].second
+						prevpage="<a class=\"docs-footer-prevpage\" href=\"../$previd\">« $ptitle</a>"
+					else
+						prevpage="<a class=\"docs-footer-prevpage\" href=\"../index\">« 索引</a>"
+					end
+					if i!=len
+						nextid=@inbounds vec[i+1]
+						ptitle=current.files[nextid].second
+						nextpage="<a class=\"docs-footer-nextpage\" href=\"../$nextid\">$ntitle »</a>"
+					end
+				end
+			end
+		else
+			prevpage="<a class=\"docs-footer-prevpage\" href=\"../index\">« 索引</a>"
+		end
+		html=makehtml(
+			editpath=repo*path*pa.second,
+			mds=pa.second.first,
+			navbar_title="$(current.name) / $title",
+			nextpage=nextpage,
+			prevpage=prevpage,
+			title=title,
+			tURL="../"^length(pathv))
+		io=open(pa.first,"w")
+		print(io,html)
+		close(io)
 	end
 	io=open("index","w")
+	print(io,makeindexhtml(current))
+	close(io)
 	# 消除影响
+	current=current.par
+	path=path[1:end-1-length(last(pathv))]
 	pop!(pathv)
 	cd("..")
 end

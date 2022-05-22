@@ -3,7 +3,6 @@ include("ify.jl")
 function makehtml(;
 	editpath::String,
 	mds::String,
-	menu::String,
 	navbar_title::String,
 	nextpage::String,
 	prevpage::String,
@@ -17,6 +16,7 @@ function makehtml(;
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>$title</title>
 		<meta name="tURL" id="tURL" content="$tURL"/>
+		<script src="$(tURL)js/menu.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>
 		<link id="theme-href" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css"/>
@@ -30,7 +30,7 @@ function makehtml(;
 				<div class="docs-package-name">
 				<span class="docs-autofit">JuliaRoadmap</span>
 				</div>
-				<ul class="docs-menu">$menu</ul>
+				<ul class="docs-menu"></ul>
 			</nav>
 			<div class="docs-main">
 				<header class="docs-navbar">
@@ -72,4 +72,8 @@ function makehtml(;
 	</body>
 	</html>
 	"""
+end
+
+function makeredirecthtml()
+	return
 end
