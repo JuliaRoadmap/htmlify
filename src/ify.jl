@@ -13,7 +13,15 @@ function md_withtitle(s::String)
 	md=Markdown.parse(s)
 	ti=md.content[1]
 	typeassert(ti,Markdown.Header{1})
-	return (ify(md.content),ti.text[1])
+	con=""
+	try
+		con=ify(md.content)
+	catch er
+		buf=IOBuffer()
+		showerror(buf,er)
+		con="<p>ERROR: $(ify_s(String(take!(buf))))</p>"
+	end
+	return Pair(con,ti.text[1])
 end
 function ify_s(s::String)
 	t=replace(s,"<"=>"&lt;")

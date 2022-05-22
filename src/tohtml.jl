@@ -1,35 +1,19 @@
 include("ify.jl")
 
-function makehtml(pathv::Vector,tree::Dict,tree_str;
-	charset::String="UTF-8",
-	md::Union{Tuple{String,String},Nothing}=nothing,
-	lang::String="zh",
-	path::String,
-	repo::String="https://github.com/JuliaRoadmap/zh/",
-	tURL::String="../"^length(pathv))
-	if md===nothing
-		io=open(path,"r")
-		try
-			mds,title=md_withtitle(read(io,String))
-		catch er
-			buf=IOBuffer()
-			showerror(buf,er)
-			mds="<p>ERROR: $(ify_s(String(take!(buf))))</p>"
-		end
-		close(io)
-	else
-		mds,title=md
-	end
-	docs_menu=""
-	navbar_title=""
-	editpath= last(pathv)=="index" ? repo*path[1:end-5]*"setting.toml" : repo*path
-	prevpage=""
-	nextpage=""
+function makehtml(;
+	editpath::String,
+	mds::String,
+	menu::String,
+	navbar_title::String,
+	nextpage::String,
+	prevpage::String,
+	title::String,
+	tURL::String)
 	return """
 	<!DOCTYPE html>
-	<html lang="$lang">
+	<html lang="zh">
 	<head>
-		<meta charset="$charset"/>
+		<meta charset="UTF-8"/>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>$title</title>
 		<meta name="tURL" id="tURL" content="$tURL"/>
@@ -46,7 +30,7 @@ function makehtml(pathv::Vector,tree::Dict,tree_str;
 				<div class="docs-package-name">
 				<span class="docs-autofit">JuliaRoadmap</span>
 				</div>
-				<ul class="docs-menu">$docs_menu</ul>
+				<ul class="docs-menu">$menu</ul>
 			</nav>
 			<div class="docs-main">
 				<header class="docs-navbar">
@@ -55,7 +39,7 @@ function makehtml(pathv::Vector,tree::Dict,tree_str;
 						<ul class="is-hidden-tablet"><li class="is-active">$navbar_title</li></ul>
 					</nav>
 					<div class="docs-right">
-						<a class="docs-edit-link" title="编辑" href="$editpath">
+						<a class="docs-edit-link" title="编辑" href="$editpath" target="_blank">
 							<span class="docs-label is-hidden-touch">编辑此页面</span>
 						</a>
 						<a class="docs-settings-button fas fa-cog" id="documenter-settings-button" href="#" title="设置"></a>
