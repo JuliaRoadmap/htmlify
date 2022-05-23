@@ -100,19 +100,22 @@ require(['jquery'], function ($) {
 })
 // theme设置
 require(['jquery'],function($){
+	var tURL=$("#tURL")[0].content
 	$(document).ready(function(){
-		var tURL=$("#tURL")[0].content
 		var theme=localStorage.getItem("theme")
 		if(theme==undefined)theme="light"
 		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
 	})
-})
-require(['jquery'],function($){
-	var tURL=$("#tURL")[0].content
 	var pi=$("#documenter-themepicker")
 	pi.bind('change',function(){
 		var theme=pi[0].value
 		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
 		localStorage.setItem("theme",theme)
+	})
+})
+// 侧边栏
+require(['jquery'],function($){
+	$(document).ready(function(){
+		$(".docs-menu")[0].innerHTML=menu
 	})
 })

@@ -11,6 +11,9 @@ end
 function md_withtitle(s::String)
 	s=replace(s,"\r"=>"")
 	md=Markdown.parse(s)
+	if isempty(md.content)
+		return Pair("<p></p>","[未命名]")
+	end
 	ti=md.content[1]
 	typeassert(ti,Markdown.Header{1})
 	con=""
@@ -71,10 +74,14 @@ function ify(a::Admonition)
 	title=a.title
 	if cat=="note"
 		cat="info"
-		title=="" && title="关于"
+		if title==""
+			title="关于"
+		end
 	elseif cat=="warn"
 		cat="warning"
-		title=="" && title="注意"
+		if title==""
+			title="注意"
+		end
 	end
 	"<div class=\"admonition is-$cat\"><header class=\"admonition-header\">$title</header><div class=\"admonition-content\">$(ify(a.content))</div></div>"
 end
