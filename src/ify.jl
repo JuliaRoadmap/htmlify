@@ -12,7 +12,7 @@ function md_withtitle(s::String)
 	s=replace(s,"\r"=>"")
 	md=Markdown.parse(s)
 	if isempty(md.content)
-		return Pair("<p></p>","[未命名]")
+		return Pair("<p></p>","未命名")
 	end
 	ti=md.content[1]
 	typeassert(ti,Markdown.Header{1})
@@ -63,7 +63,7 @@ function ify(f::Footnote)
 	if f.text === nothing
 		return "<sup><a href=\"#footnote-$(f.id)\">$(f.id)</a></sup>"
 	else
-		return "<p id=\"footnote-$(f.id)\">$(f.id)</p>"*ify(f.text)
+		return "<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*ify(f.text)
 	end
 end
 function ify(b::BlockQuote)
@@ -72,18 +72,12 @@ end
 function ify(a::Admonition)
 	cat=a.category
 	title=a.title
-	if cat=="note"
+	if cat=="note" || cat=="tips"
 		cat="info"
-		if title==""
-			title="关于"
-		end
 	elseif cat=="warn"
 		cat="warning"
-		if title==""
-			title="注意"
-		end
 	end
-	"<div class=\"admonition is-$cat\"><header class=\"admonition-header\">$title</header><div class=\"admonition-content\">$(ify(a.content))</div></div>"
+	"<div class=\"admonition is-$cat\"><header class=\"admonition-header\">$title</header><div class=\"admonition-body\"><p>$(ify(a.content))</p></div></div>"
 end
 function ify(l::List)
 	if l.ordered==-1
@@ -115,11 +109,11 @@ function ify(l::Link)
 	if !startswith(url,"https://")
 		ma=findfirst(r".md(#.*)?$",url)
 		if ma!==nothing
-			url=url[1:ma.stop-1]
+			url=url[1:ma.start-1]*缀
 		end
-		ma=findfirst(r".txt$",url)
+		ma=findfirst(r".txt(#.*)?$",url)
 		if ma!==nothing
-			url=url[1:ma.stop-1]
+			url=url[1:ma.start-1]*缀
 		end
 	end
 	return "<a href=\"$(url)\" target=\"_blank\">$htm</a>"

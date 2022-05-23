@@ -6,20 +6,15 @@ const keywords=[
 const specials=[
 	"true","false","nothing","missing"
 ]
-safecol(content::String,co::String)="<span class=\"$co\">$content</span>"
+safecol(content::String,co::String)="<span class=\"hl-$co\">$content</span>"
 function col(content::String,co::String;br=true)
 	if content=="" return "" end
 	t=replace(content,"&"=>"&amp;")
 	t=replace(t,"<"=>"&lt;")
 	t=replace(t,">"=>"&gt;")
 	t=replace(t," "=>"&nbsp;")
-	return "<span class=\"$co\">$(br ? replace(t,"\n"=>"<br />") : t)</span>"
+	return "<span class=\"hl-$co\">$(br ? replace(t,"\n"=>"<br />") : t)</span>"
 end
-#= todo:
-* 长转义
-* 末尾处理
-* 正则表达式
-=#
 function jlcode(co::String)
 	repl=false
 	s=""

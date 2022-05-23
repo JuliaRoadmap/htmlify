@@ -1,4 +1,5 @@
 using TOML
+const 缀="$(缀)"
 include("tohtml.jl")
 mutable struct Node
 	par::Union{Node,Nothing}
@@ -9,7 +10,7 @@ mutable struct Node
 end
 Node(par::Union{Node,Nothing},name::String,toml::Dict=Dict())=Node(par,name,toml,Dict{String,Pair{Node,String}}(),Dict{String,Pair{String,String}}())
 
-const repo="https://github.com/JuliaRoadmap/zh/"
+const repo="https://github.com/JuliaRoadmap/zh/tree/master/"
 function generate(srcdir::AbstractString,tardir::AbstractString)
 	if !endswith(srcdir,"/")
 		srcdir*="/"
@@ -19,7 +20,7 @@ function generate(srcdir::AbstractString,tardir::AbstractString)
 	end
 	# 复制
 	cd(@__DIR__)
-	cd("../")
+	cd("..")
 	cp("css",tardir*"css";force=true)
 	cp("img",tardir*"img";force=true)
 	cp("js",tardir*"js";force=true)
@@ -31,7 +32,7 @@ function generate(srcdir::AbstractString,tardir::AbstractString)
 	_gen_rec(;current=root,outline=true,path="docs/",pathv=["docs"],srcdir=srcdir,tardir=tardir)
 	# menu
 	io=open(tardir*"js/menu.js","w")
-	print(io,"const menu=`",makemenu(root),"`")
+	print(io,"const menu=`",makemenu(root;path="docs/"),"`")
 	close(io)
 end
 function _gen_rec(;
@@ -94,39 +95,35 @@ function _gen_rec(;
 			vec=@inbounds toml["outline"]
 			len=length(vec)
 			for i in 1:len
-				if i==id
+				if vec[i]==id
 					if i!=1
 						previd=@inbounds(vec[i-1])
 						ptitle=current.files[previd].second
-						prevpage="<a class=\"docs-footer-prevpage\" href=\"../$previd\">« $ptitle</a>"
+						prevpage="<a class=\"docs-footer-prevpage\" href=\"$(previd)$(缀)\">« $ptitle</a>"
 					else
-						prevpage="<a class=\"docs-footer-prevpage\" href=\"../index\">« 索引</a>"
+						prevpage="<a class=\"docs-footer-prevpage\" href=\"index$(缀)\">« 索引</a>"
 					end
 					if i!=len
 						nextid=@inbounds vec[i+1]
-						ptitle=current.files[nextid].second
-						nextpage="<a class=\"docs-footer-nextpage\" href=\"../$nextid\">$ntitle »</a>"
+						ntitle=current.files[nextid].second
+						nextpage="<a class=\"docs-footer-nextpage\" href=\"$(nextid)$(缀)\">$ntitle »</a>"
 					end
 				end
 			end
 		else
-			prevpage="<a class=\"docs-footer-prevpage\" href=\"../index\">« 索引</a>"
+			prevpage="<a class=\"docs-footer-prevpage\" href=\"index$(缀)\">« 索引</a>"
 		end
 		html=makehtml(
 			editpath=repo*path*id,
 			mds=pa.second.first,
-			navbar_title="$(current.name) / $title",
+			navbar_title="$(current.par.dirs[current.name].second) / $title",
 			nextpage=nextpage,
 			prevpage=prevpage,
 			title=title,
 			tURL="../"^length(pathv))
-		io=open(tpath*pa.first,"w")
-		print(io,html)
-		close(io)
+		writehtml(tpath*pa.first,html)
 	end
-	io=open(tpath*"index","w")
-	print(io,makeindexhtml(current,path,pathv))
-	close(io)
+	writehtml(tpath*"index",makeindexhtml(current,path,pathv))
 	# 消除影响
 	current=current.par
 	path=path[1:end-1-length(last(pathv))]
@@ -134,17 +131,18 @@ function _gen_rec(;
 	cd("..")
 end
 
-function makemenu(rt::Node)
+function makemenu(rt::Node;path::String)
 	html=""
 	if haskey(rt.toml,"outline")
 		outline=@inbounds rt.toml["outline"]
 		for id in outline
+			expath=path*id
 			if haskey(rt.dirs,id)
 				pair=@inbounds rt.dirs[id]
-				html*="<li><a class=\"tocitem\" href=\"$id/index\">$(pair.second)</a><ul>$(makemenu(pair.first))</ul><li>"
+				html*="<li><a class=\"tocitem\" href=\"\$$(expath)/index$(缀)\">$(pair.second)</a><ul>$(makemenu(pair.first;path=expath*"/"))</ul><li>"
 			else
 				name=rt.files[id].second
-				html*="<li><a class=\"tocitem\" href=\"$id\">$name</a></li>"
+				html*="<li><a class=\"tocitem\" href=\"\$$(expath)$(缀)\">$name</a></li>"
 			end
 		end
 		return html
@@ -154,18 +152,25 @@ end
 function makeindexhtml(node::Node,path::String,pathv::Vector{String})
 	mds="<ul>"
 	for d in node.dirs
-		mds*="<li><a href=\"$(d.first)/index\" target=\"_blank\">$(d.second.second)/</a></li>"
+		mds*="<li><a href=\"$(d.first)/index$(缀)\" target=\"_blank\">$(d.second.second)/</a></li>"
 	end
 	for d in node.files
-		mds*="<li><a href=\"$(d.first)\">$(d.second.second)</a></li>"
+		mds*="<li><a href=\"$(d.first)$(缀)\">$(d.second.second)</a></li>"
 	end
 	mds*="</ul>"
+	title = (node.par===nothing ? "主页" : node.par.dirs[node.name].second)*"索引"
 	return makehtml(
 		editpath=repo*path,
 		mds=mds,
-		navbar_title="$(node.name) / 索引",
+		navbar_title=title,
 		nextpage="",
-		prevpage="<a class=\"docs-footer-prevpage\" href=\"../index\">« 上层索引</a>",
-		title="$(node.name)索引",
+		prevpage="<a class=\"docs-footer-prevpage\" href=\"../index$(缀)\">« 上层索引</a>",
+		title=title,
 		tURL="../"^length(pathv))
+end
+
+function writehtml(path::String,html::String)
+	io=open(path*缀,"w")
+	print(io,html)
+	close(io)
 end

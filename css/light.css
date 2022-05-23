@@ -7555,56 +7555,6 @@ html {
 	#documenter .docs-main #documenter-search-results .docs-highlight {
 		background-color: yellow; }
 
-/* [EDIT] hljs changed. */
 .language-julia{
 	background-color: whitesmoke;
-	font-family: 'Courier New', Courier, monospace;
-}
-.hl-repl-code{
-	color: green;
-}
-.hl-repl-help{
-	color: wheat;
-}
-.hl-repl-pkg{
-	color: rgb(16,64,224);
-}
-.hl-repl-shell{
-	color: red;
-}
-.hl-repl-error{
-	color: red;
-}
-.hl-comment{
-	color: darkolivegreen;
-}
-.hl-string{
-	color: brown;
-}
-.hl-keyword{
-	color: purple;
-}
-.hl-special{
-	color: royalblue;
-}
-.hl-escape{
-	color: goldenrod;
-}
-.hl-insert{
-	color: skyblue;
-}
-.hl-plain{
-	color: darkgray;
-}
-.hl-macro{
-	color: gold;
-}
-.hl-function{
-	color: darkgoldenrod;
-}
-.hl-number{
-	color: yellowgreen;
-}
-.hl-type{
-	color: forestgreen;
 }

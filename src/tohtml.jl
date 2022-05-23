@@ -19,6 +19,7 @@ function makehtml(;
 		<script src="$(tURL)js/menu.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>
 		<link id="theme-href" rel="stylesheet" type="text/css">
+		<link rel="stylesheet" type="text/css" href="$(tURL)css/general.css">
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css"/>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css"/>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/brands.min.css"/>
@@ -72,8 +73,4 @@ function makehtml(;
 	</body>
 	</html>
 	"""
-end
-
-function makeredirecthtml()
-	return
 end
