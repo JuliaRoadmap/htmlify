@@ -29,7 +29,7 @@ function jlcode(co::String)
 	pre=1
 	i=1
 	emp=false
-	dealf=(to::Int=i-1)->begin
+	dealf=(to::Int=prevind(co,i))->begin
 		s*=col(co[pre:to],emp ? "plain" :
 			last(stack)==0x0 ? "insert" : "string"
 		)
@@ -89,7 +89,7 @@ function jlcode(co::String)
 				if co[j]=='{' st+=1
 				elseif co[j]=='}'
 					st==0 ? break : st-=1
-				elseif !Base.is_id_char(co[j])
+				elseif !(Base.is_id_char(co[j]) || co[j]==' ' || co[j]==',')
 					break
 				end
 				j=nextind(co,j)

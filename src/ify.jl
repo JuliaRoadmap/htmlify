@@ -20,6 +20,7 @@ function md_withtitle(s::String)
 	try
 		con=ify(md.content)
 	catch er
+		@error er
 		buf=IOBuffer()
 		showerror(buf,er)
 		con="<p>ERROR: $(ify_s(String(take!(buf))))</p>"
@@ -46,7 +47,8 @@ function ify(p::Paragraph)
 end
 function ify(h::Header)
 	lv=typeof(h).parameters[1]
-	return "<h$lv>$(h.text[1])</h$lv>"
+	text=h.text[1]
+	return "<h$lv id=\"header-$text\">$text</h$lv>"
 end
 function ify(c::Code)
 	la=c.language
@@ -63,7 +65,8 @@ function ify(f::Footnote)
 	if f.text === nothing
 		return "<sup><a href=\"#footnote-$(f.id)\">$(f.id)</a></sup>"
 	else
-		return "<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*ify(f.text)
+		html= startswith(f.text,"https://") ? "<a href=\"$(f.text)\" target=\"_blank\">$(f.text)</a>" : ify(f.text)
+		return "<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*html
 	end
 end
 function ify(b::BlockQuote)
@@ -109,11 +112,11 @@ function ify(l::Link)
 	if !startswith(url,"https://")
 		ma=findfirst(r".md(#.*)?$",url)
 		if ma!==nothing
-			url=url[1:ma.start-1]*缀
+			url=url[1:ma.start-1]*缀*"header-"*url[ma.start+3:ma.stop]
 		end
 		ma=findfirst(r".txt(#.*)?$",url)
 		if ma!==nothing
-			url=url[1:ma.start-1]*缀
+			url=url[1:ma.start-1]*缀*"header-"*url[ma.start+4:ma.stop]
 		end
 	end
 	return "<a href=\"$(url)\" target=\"_blank\">$htm</a>"
