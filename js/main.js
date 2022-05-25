@@ -101,12 +101,13 @@ require(['jquery'], function ($) {
 require(['jquery'],function($){
 	var tURL=$("#tURL")[0].content
 	var pi=$("#documenter-themepicker")
-	var thr=$("#theme-href")[0]
 	var theme=localStorage.getItem("theme")
 	if(theme==undefined)theme="light"
 	// 初始化theme
-	thr.ready(function(){
-		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+	$("#theme-href").ready(function(){
+		if(theme!="light"){
+			$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+		}
 	})
 	pi.ready(function(){
 		for(tag of pi[0]){
@@ -128,23 +129,26 @@ require(['jquery'],function($){
 		$(".docs-menu")[0].innerHTML=_menu
 	})
 	// 复制标题链接
-	$(".content")[0].ready(function(){
+	$(".content").ready(function(){
 		pasteh=function(id){
 			var s=document.location.href
-			navigator.clipboard.writeText(s*"/header-"*id).then(function(){},function(){window.alert("复制失败")})
+			navigator.clipboard.writeText(s+"#"+id).then(function(){},function(){window.alert("复制失败")})
 		}
 		bindh=function(s){
-			for(i of $(".content ")*s){
+			for(var i of $(".content "+s)){
 				i.ondblclick=function(){pasteh(i.id)}
 			}
 		}
 		bindh("h1");bindh("h2");bindh("h3")
 		bindh("h4");bindh("h5");bindh("h6")
 		// 复制代码块数据
-		for(i of $(".content pre")){
+		for(var i of $(".content pre")){
 			i.ondblclick=function(){
 				var s=""
-				for(e of i.child)s+=e.innerText
+				for(e of i.children){
+					if(e.tagName=="BR")s+="\n"
+					else s+=e.innerText
+				}
 				navigator.clipboard.writeText(s).then(function(){},function(){
 					window.alert("复制失败")
 				})
