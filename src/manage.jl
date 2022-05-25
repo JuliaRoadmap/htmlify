@@ -60,14 +60,29 @@ function _gen_rec(;
 			dot=findlast('.',it)
 			pre=it[1:dot-1]
 			suf=it[dot+1:end]
-			io=open(spath*it,"r")
 			if suf=="md"
+				io=open(spath*it,"r")
 				pair=md_withtitle(read(io,String))
+				close(io)
+			elseif suf=="jl"
+				io=open(spath*it,"r")
+				str=replace(read(io,String),"\r"=>"")
+				pair=Pair("<pre class=\"language-julia\">jlcode($str)</pre>",pre)
+				close(io)
+			elseif suf=="txt"
+				str="<pre class=\"language-txt\">"
+				io=open(spath*it,"r")
+				num=1
+				for l in eachline(io)
+					str*="<span class=\"line-$num\">$(ify_s(l))</span><br />"
+					num+=1
+				end
+				pair=Pair(str*"</pre>",pre)
+				close(io)
 			else
 				cp(spath*it,tardir*path*it;force=true)
 				flag=false
 			end
-			close(io)
 			if flag
 				current.files[pre]=pair
 			end

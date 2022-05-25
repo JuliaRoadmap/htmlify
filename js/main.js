@@ -101,24 +101,26 @@ require(['jquery'], function ($) {
 require(['jquery'],function($){
 	var tURL=$("#tURL")[0].content
 	var pi=$("#documenter-themepicker")
-	pi.bind('change',function(){
-		// 更改主题
-		var theme=pi[0].value
+	var thr=$("#theme-href")[0]
+	var theme=localStorage.getItem("theme")
+	if(theme==undefined)theme="light"
+	// 初始化theme
+	thr.ready(function(){
 		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
-		localStorage.setItem("theme",theme)
 	})
-	$(document).ready(function(){
-		// 初始化主题
-		var theme=localStorage.getItem("theme")
-		if(theme==undefined)theme="light"
-		$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+	pi.ready(function(){
 		for(tag of pi[0]){
 			if(tag.value==theme){
 				tag.selected=true
 				break
 			}
 		}
-		
+		pi.bind('change',function(){
+			// 更改theme
+			var theme=pi[0].value
+			$("#theme-href")[0].href=tURL+"css/"+theme+".css"
+			localStorage.setItem("theme",theme)
+		})
 	})
 	$(".docs-menu").ready(function(){
 		// 侧边栏
@@ -126,30 +128,40 @@ require(['jquery'],function($){
 		$(".docs-menu")[0].innerHTML=_menu
 	})
 	// 复制标题链接
-	pasteh=function(id){
-		var s=document.location.href
-		navigator.clipboard.writeText(s*"/header-"*id).then(function(){},function(){
-			window.alert("复制失败")
-		})
-	}
-	bindh=function(s){
-		for(i of $(".content ")*s){
-			i.ondblclick=function(){pasteh(i.id)}
+	$(".content")[0].ready(function(){
+		pasteh=function(id){
+			var s=document.location.href
+			navigator.clipboard.writeText(s*"/header-"*id).then(function(){},function(){window.alert("复制失败")})
 		}
-	}
-	bindh("h1");bindh("h2")
-	bindh("h3");bindh("h4")
-	bindh("h5");bindh("h6")
-	// 复制代码块数据
-	for(i of $(".content pre")){
-		i.ondblclick=function(){
-			var s=""
-			for(e of i.child){
-				s+=e.innerText
+		bindh=function(s){
+			for(i of $(".content ")*s){
+				i.ondblclick=function(){pasteh(i.id)}
 			}
-			navigator.clipboard.writeText(s).then(function(){},function(){
-				window.alert("复制失败")
-			})
 		}
-	}
+		bindh("h1");bindh("h2");bindh("h3")
+		bindh("h4");bindh("h5");bindh("h6")
+		// 复制代码块数据
+		for(i of $(".content pre")){
+			i.ondblclick=function(){
+				var s=""
+				for(e of i.child)s+=e.innerText
+				navigator.clipboard.writeText(s).then(function(){},function(){
+					window.alert("复制失败")
+				})
+			}
+		}
+	})
+	$(document).ready(function(){
+		// 检测L-L定位
+		var loc=document.location.hash
+		if(loc[0]=='L'){
+			var split=loc.search('-')
+			var from=Number(loc.substring(1,split))
+			var to=Number(loc.substring(split+2,loc.length))
+			for(var i=from;i<=to;i++){
+				document.getElementById("line-"+i).style.backgroundColor="lightgreen"
+			}
+			document.getElementById("line"+from).scrollIntoView()
+		}
+	})
 })
