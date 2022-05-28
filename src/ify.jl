@@ -107,7 +107,7 @@ function ify(l::Link)
 	url=l.url
 	# 特殊处理
 	if startswith(url,"#")
-		return "<a href=\"$url\">$htm</a>"
+		return "<a href=\"header-$(url)\">$htm</a>"
 	end
 	if !startswith(url,"https://")
 		ma=findfirst(r".md(#.*)?$",url)

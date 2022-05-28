@@ -17,6 +17,8 @@ function makehtml(;
 		<title>$title</title>
 		<meta name="tURL" id="tURL" content="$tURL"/>
 		<script src="$(tURL)js/menu.js"></script>
+		<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+		<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>
 		<link id="theme-href" rel="stylesheet" type="text/css">
 		<link rel="stylesheet" type="text/css" href="$(tURL)css/general.css">
@@ -66,7 +68,7 @@ function makehtml(;
 							</div>
 						</p>
 					</section>
-					<footer class="modal-card-foot"></footer>
+					<footer class="modal-card-foot">$buildmessage</footer>
 				</div>
 			</div>
 		</div>

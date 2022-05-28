@@ -1,5 +1,6 @@
 using TOML
 const 缀="$(缀)"
+const buildmessage="生成于2022/5/28"
 include("tohtml.jl")
 mutable struct Node
 	par::Union{Node,Nothing}
@@ -24,6 +25,7 @@ function generate(srcdir::AbstractString,tardir::AbstractString)
 	cp("css",tardir*"css";force=true)
 	cp("img",tardir*"img";force=true)
 	cp("js",tardir*"js";force=true)
+	cp("spec/favicon.png",tardir*"favicon.ico";force=true)
 	cd(srcdir)
 	cp("svg",tardir*"svg";force=true)
 	# docs
