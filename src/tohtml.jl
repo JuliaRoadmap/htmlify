@@ -20,7 +20,7 @@ function makehtml(;
 		<link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
 		<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>
-		<link id="theme-href" rel="stylesheet" type="text/css">
+		<link id="theme-href" rel="stylesheet" type="text/css" href=\"$(tURL)css/light.css\">
 		<link rel="stylesheet" type="text/css" href="$(tURL)css/general.css">
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/fontawesome.min.css"/>
 		<link rel="stylesheet" type="text/css" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.0/css/solid.min.css"/>
@@ -51,6 +51,7 @@ function makehtml(;
 				</header>
 				<article class="content">$mds</article>
 				<nav class="docs-footer">$(prevpage)$(nextpage)</nav>
+				<div id="gitalk-container"></div>
 			</div>
 			<div class="modal" id="documenter-settings">
 				<div class="modal-background"></div>

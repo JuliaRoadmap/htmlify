@@ -2,6 +2,7 @@ using Markdown
 using Markdown:Paragraph,Header,Code,Footnote,BlockQuote,Admonition,List,HorizontalRule
 using Markdown:Italic,Bold,Image,Link,LineBreak
 using Markdown:Table
+using Markdown:LaTeX
 include("jlcode.jl")
 function ify_md(s::String)
 	s=replace(s,"\r"=>"")
@@ -65,7 +66,8 @@ function ify(f::Footnote)
 	if f.text === nothing
 		return "<sup><a href=\"#footnote-$(f.id)\">$(f.id)</a></sup>"
 	else
-		html= startswith(f.text,"https://") ? "<a href=\"$(f.text)\" target=\"_blank\">$(f.text)</a>" : ify(f.text)
+		text=f.text[1].content[1]
+		html= startswith(text,"https://") ? "<a href=\"$text\" target=\"_blank\">$text</a>" : ify(f.text)
 		return "<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*html
 	end
 end
@@ -107,16 +109,28 @@ function ify(l::Link)
 	url=l.url
 	# 特殊处理
 	if startswith(url,"#")
-		return "<a href=\"header-$(url)\">$htm</a>"
+		return "<a href=\"#header-$(url[2:end])\">$htm</a>"
 	end
 	if !startswith(url,"https://")
-		ma=findfirst(r".md(#.*)?$",url)
-		if ma!==nothing
-			url=url[1:ma.start-1]*缀*"header-"*url[ma.start+3:ma.stop]
-		end
-		ma=findfirst(r".txt(#.*)?$",url)
-		if ma!==nothing
-			url=url[1:ma.start-1]*缀*"header-"*url[ma.start+4:ma.stop]
+		has=findlast('#',url)
+		if has!==nothing
+			ma=findfirst(r".md#.*$",url)
+			if ma!==nothing
+				url=url[1:ma.start-1]*缀*"#header-"*url[ma.start+4:ma.stop]
+			else
+				ma=findfirst(r".txt#.*$",url)
+				if ma!==nothing
+					url=url[1:ma.start-1]*缀*url[ma.start+4:ma.stop]
+				end
+			end
+		else
+			if findlast(".md",url)!==nothing
+				url=url[1:sizeof(url)-3]*缀
+			elseif findlast(".jl",url)!==nothing
+				url=url[1:sizeof(url)-3]*缀
+			elseif findlast(".txt",url)!==nothing
+				url=url[1:sizeof(url)-4]*缀
+			end
 		end
 	end
 	return "<a href=\"$(url)\" target=\"_blank\">$htm</a>"
@@ -141,4 +155,8 @@ function ify(t::Table)
 		s*="</tr>"
 	end
 	return s*"</table>"
+end
+# latex
+function ify(l::LaTeX)
+	return "<p>$(l.formula)</p>"
 end

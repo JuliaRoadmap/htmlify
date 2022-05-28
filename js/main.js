@@ -158,6 +158,7 @@ require(['jquery'],function($){
 	$(document).ready(function(){
 		// 检测L-L定位
 		var loc=document.location.hash
+		loc=loc.substring(1,loc.length)
 		if(loc[0]=='L'){
 			var split=loc.search('-')
 			var from=Number(loc.substring(1,split))
@@ -165,7 +166,7 @@ require(['jquery'],function($){
 			for(var i=from;i<=to;i++){
 				document.getElementById("line-"+i).style.backgroundColor="lightgreen"
 			}
-			document.getElementById("line"+from).scrollIntoView()
+			document.getElementById("line-"+from).scrollIntoView()
 		}
 		// gitalk
 		const gitalk = new Gitalk({

@@ -1,5 +1,5 @@
 using TOML
-const 缀="$(缀)"
+const 缀=".html"
 const buildmessage="生成于2022/5/28"
 include("tohtml.jl")
 mutable struct Node
@@ -69,14 +69,14 @@ function _gen_rec(;
 			elseif suf=="jl"
 				io=open(spath*it,"r")
 				str=replace(read(io,String),"\r"=>"")
-				pair=Pair("<pre class=\"language-julia\">jlcode($str)</pre>",pre)
+				pair=Pair("<pre class=\"language-julia\">$(jlcode(str))</pre>",pre)
 				close(io)
 			elseif suf=="txt"
 				str="<pre class=\"language-txt\">"
 				io=open(spath*it,"r")
 				num=1
 				for l in eachline(io)
-					str*="<span class=\"line-$num\">$(ify_s(l))</span><br />"
+					str*="<span id=\"line-$num\">$(ify_s(l))</span><br />"
 					num+=1
 				end
 				pair=Pair(str*"</pre>",pre)
@@ -94,6 +94,7 @@ function _gen_rec(;
 				throw("KEY [NAMES] UNFOUND")
 			end
 			ns=@inbounds current.toml["names"]
+			ns::Dict
 			node=Node(current,it)
 			current.dirs[it]=Pair(node,ns[it])
 			push!(pathv,it)
