@@ -168,19 +168,5 @@ require(['jquery'],function($){
 			}
 			document.getElementById("line-"+from).scrollIntoView()
 		}
-		// gitalk
-		const gitalk = new Gitalk({
-			clientID: 'fb73dd4ca36d5dbb8861',
-			clientSecret: '1501e6ccdbc5514737e3db90f1fe0b53c9fdad90',
-			repo: 'zh',
-			owner: 'JuliaRoadmap',
-			admin: ["johnnychen94","Rratic"],
-			id: location.pathname, // Ensure uniqueness and length less than 50
-			distractionFreeMode: false, // Facebook-like distraction free mode
-			labels: ['gitalk'],
-			body: ["发表您的评论"],
-			language: "zh-CN",
-		})
-		gitalk.render('gitalk-container')
 	})
 })

@@ -132,7 +132,7 @@ function _gen_rec(;
 			prevpage="<a class=\"docs-footer-prevpage\" href=\"index$(缀)\">« 索引</a>"
 		end
 		html=makehtml(
-			editpath=repo*path*id,
+			editpath=repo*path,
 			mds=pa.second.first,
 			navbar_title="$(current.par.dirs[current.name].second) / $title",
 			nextpage=nextpage,
