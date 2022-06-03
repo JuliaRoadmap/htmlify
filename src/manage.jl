@@ -1,6 +1,6 @@
 using TOML
 const 缀=".html"
-const buildmessage="生成于2022/5/28"
+const buildmessage="生成于2022/6/3"
 include("tohtml.jl")
 mutable struct Node
 	par::Union{Node,Nothing}

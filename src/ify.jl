@@ -61,9 +61,10 @@ function ify(c::Code)
 	elseif la=="insert-html"
 		return co
 	elseif la=="insert-fill"
+		return "（功能开发中）"
 	elseif startswith(la,"is-")
 		return """
-		<div class="checkis" data-check="$(la)">$(ify(co))</div>
+		<div class="checkis" data-check="$(la)">$(ify_md(co))</div>
 		"""
 	else
 		return "<pre class=\"language-$la\">$(replace(co,"\n"=>"<br />"))</pre>"
