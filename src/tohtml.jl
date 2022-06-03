@@ -1,6 +1,7 @@
 include("ify.jl")
 
 function makehtml(;
+	buildmessage::String,
 	editpath::String,
 	mds::String,
 	navbar_title::String,

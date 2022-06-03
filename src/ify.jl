@@ -61,7 +61,11 @@ function ify(c::Code)
 	elseif la=="insert-html"
 		return co
 	elseif la=="insert-fill"
-		return "（功能开发中）"
+		tup=eval(Meta.parse(co))::Tuple
+		des=tup[1]::String
+		return """<div>$(ify_s(des))
+		</div>
+		"""
 	elseif startswith(la,"is-")
 		return """
 		<div class="checkis" data-check="$(la)">$(ify_md(co))</div>
