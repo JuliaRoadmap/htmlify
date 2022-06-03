@@ -58,6 +58,13 @@ function ify(c::Code)
 		return "<code>$co</code>"
 	elseif la=="jl"
 		return "<pre class=\"language-julia\">$(jlcode(co))</pre>"
+	elseif la=="insert-html"
+		return co
+	elseif la=="insert-fill"
+	elseif startswith(la,"is-")
+		return """
+		<div class="checkis" data-check="$(la)">$(ify(co))</div>
+		"""
 	else
 		return "<pre class=\"language-$la\">$(replace(co,"\n"=>"<br />"))</pre>"
 	end

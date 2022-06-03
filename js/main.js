@@ -168,5 +168,11 @@ require(['jquery'],function($){
 			}
 			document.getElementById("line-"+from).scrollIntoView()
 		}
+		for(var i of $(".checkis")){
+			var chk=i.dataset["check"]
+			if(localStorage.getItem(chk)==true){
+				i.style.display="block"
+			}
+		}
 	})
 })

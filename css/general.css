@@ -57,3 +57,7 @@
 .content .admonition > p{
 	display: block;
 }
+/* 附加功能 */
+.checkis{
+	display: none;
+}
