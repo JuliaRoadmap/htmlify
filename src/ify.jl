@@ -57,21 +57,25 @@ function ify(c::Code)
 	if la=="" # 推测为行内
 		return "<code>$co</code>"
 	elseif la=="jl"
-		return "<pre class=\"language-julia\">$(jlcode(co))</pre>"
+		return "<pre class=\"language\">$(jlcode(co))</pre>"
 	elseif la=="insert-html"
-		return co
+		return co*"<br />"
 	elseif la=="insert-fill"
 		tup=eval(Meta.parse(co))::Tuple
 		des=tup[1]::String
-		return """<div>$(ify_s(des))
-		</div>
-		"""
+		esc=escape_string(tup[2])
+		reg=length(tup)==3 ? tup[3] : "^$esc\$"
+		return """<div class="fill-area"><p>$(ify_s(des))</p><br />
+	<input type="text" placeholder="填入答案">
+	<button class="submit-fill" data-ans="$reg">提交</button>
+	<button class="ans-fill" data-ans="$esc">查看答案</button>
+</div>"""
 	elseif startswith(la,"is-")
 		return """
 		<div class="checkis" data-check="$(la)">$(ify_md(co))</div>
 		"""
 	else
-		return "<pre class=\"language-$la\">$(replace(co,"\n"=>"<br />"))</pre>"
+		return "<pre class=\"language\">$(replace(co,"\n"=>"<br />"))</pre>"
 	end
 end
 function ify(f::Footnote)
@@ -80,7 +84,7 @@ function ify(f::Footnote)
 	else
 		text=f.text[1].content[1]
 		html= startswith(text,"https://") ? "<a href=\"$text\" target=\"_blank\">$text</a>" : ify(f.text)
-		return "<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*html
+		return (f.id=="1" ? "<br />" : "")*"<br /><p id=\"footnote-$(f.id)\">$(f.id). </p>"*html
 	end
 end
 function ify(b::BlockQuote)

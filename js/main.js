@@ -169,10 +169,31 @@ require(['jquery'],function($){
 			document.getElementById("line-"+from).scrollIntoView()
 		}
 		// 检测条件激发
-		for(var i of $(".checkis")){
+		for(let i of $(".checkis")){
 			var chk=i.dataset["check"]
 			if(localStorage.getItem(chk)=="true"){
 				i.style.display="block"
+			}
+		}
+		// 初始化填空题
+		for(let i of $(".submit-fill")){
+			i.onclick=function(){
+				var input=i.parentNode.children[2]
+				var reg=RegExp(i.dataset["ans"])
+				if(reg.exec(input.value)===null){
+					i.style.backgroundColor="red"
+				}else{
+					i.style.backgroundColor="green"
+				}
+				setTimeout(function(){
+					i.style.backgroundColor=null
+				},2000)
+			}
+		}
+		for(let i of $(".ans-fill")){
+			i.onclick=function(){
+				var input=i.parentNode.children[2]
+				input.value=i.dataset["ans"]
 			}
 		}
 	})

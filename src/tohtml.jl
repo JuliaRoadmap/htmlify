@@ -18,7 +18,7 @@ function makehtml(;
 		<title>$title</title>
 		<meta name="tURL" id="tURL" content="$tURL"/>
 		<script src="$(tURL)js/menu.js"></script>
-		<script src="https://giscus.app/client.js" data-repo="JuliaRoadmap/zh" data-repo-id="R_kgDOHQYI2Q" data-category="General" data-category-id="DIC_kwDOHQYI2c4CO2c8" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script>
+		<script src="https://giscus.app/client.js" data-repo="JuliaRoadmap/zh" data-repo-id="R_kgDOHQYI2Q" data-category="General" data-category-id="DIC_kwDOHQYI2c4CO2c9" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>
 		<link id="theme-href" rel="stylesheet" type="text/css" href=\"$(tURL)css/light.css\">
 		<link rel="stylesheet" type="text/css" href="$(tURL)css/general.css">

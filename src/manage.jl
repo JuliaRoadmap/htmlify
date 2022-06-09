@@ -92,6 +92,8 @@ function _gen_rec(;
 				end
 				pair=Pair(str*"</pre>",pre)
 				close(io)
+			elseif sur=="tmp"
+				flag=false
 			else
 				cp(spath*it,tardir*path*it;force=true)
 				flag=false
