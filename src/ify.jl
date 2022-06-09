@@ -63,9 +63,11 @@ function ify(c::Code)
 	elseif la=="insert-fill"
 		tup=eval(Meta.parse(co))::Tuple
 		des=tup[1]::String
+		des=ify_s(des)
+		des=replace(des,"\n"=>"<br />")
 		esc=escape_string(tup[2])
-		reg=length(tup)==3 ? tup[3] : "^$esc\$"
-		return """<div class="fill-area"><p>$(ify_s(des))</p><br />
+		reg=length(tup)==3 ? tup[3].pattern : "^$esc\$"
+		return """<div class="fill-area"><p>$des</p><br />
 	<input type="text" placeholder="填入答案">
 	<button class="submit-fill" data-ans="$reg">提交</button>
 	<button class="ans-fill" data-ans="$esc">查看答案</button>

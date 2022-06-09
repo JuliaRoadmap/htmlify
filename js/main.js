@@ -181,9 +181,9 @@ require(['jquery'],function($){
 				var input=i.parentNode.children[2]
 				var reg=RegExp(i.dataset["ans"])
 				if(reg.exec(input.value)===null){
-					i.style.backgroundColor="red"
+					i.style.backgroundColor="#f05020"
 				}else{
-					i.style.backgroundColor="green"
+					i.style.backgroundColor="#80af00"
 				}
 				setTimeout(function(){
 					i.style.backgroundColor=null

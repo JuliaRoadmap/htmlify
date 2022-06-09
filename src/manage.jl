@@ -36,6 +36,7 @@ function generate(srcdir::AbstractString,tardir::AbstractString;
 	cp("spec/favicon.png",tardir*"favicon.ico";force=true)
 	cd(srcdir)
 	cp("svg",tardir*"svg";force=true)
+	cp("script/searchpkg.js",tardir*"js/searchpkg.js")
 	# docs
 	root=Node(nothing,"文档")
 	cd(srcdir*"docs")
@@ -69,7 +70,6 @@ function _gen_rec(;
 		if it=="setting.toml"
 			continue
 		elseif isfile(it)
-			flag=true
 			dot=findlast('.',it)
 			pre=it[1:dot-1]
 			suf=it[dot+1:end]
@@ -77,29 +77,26 @@ function _gen_rec(;
 				io=open(spath*it,"r")
 				pair=md_withtitle(read(io,String))
 				close(io)
+				current.files[pre]=(pair.first,pair.second,suf)
 			elseif suf=="jl"
 				io=open(spath*it,"r")
 				str=replace(read(io,String),"\r"=>"")
-				pair=Pair("<pre class=\"language-julia\">$(jlcode(str))</pre>",pre)
 				close(io)
+				current.files[pre]=("<pre class=\"language\">$(jlcode(str))</pre>",pre,suf)
 			elseif suf=="txt"
-				str="<pre class=\"language-txt\">"
+				str="<pre class=\"language\">"
 				io=open(spath*it,"r")
 				num=1
 				for l in eachline(io)
 					str*="<span id=\"line-$num\">$(ify_s(l))</span><br />"
 					num+=1
 				end
-				pair=Pair(str*"</pre>",pre)
 				close(io)
+				current.files[pre]=(str*"</pre>",pre,suf)
 			elseif sur=="tmp"
-				flag=false
+				nothing
 			else
 				cp(spath*it,tardir*path*it;force=true)
-				flag=false
-			end
-			if flag
-				current.files[pre]=(pair.first,pair.second,suf)
 			end
 		else # isdir
 			if !haskey(current.toml,"names")

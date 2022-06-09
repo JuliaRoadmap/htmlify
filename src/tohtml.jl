@@ -17,6 +17,7 @@ function makehtml(;
 		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 		<title>$title</title>
 		<meta name="tURL" id="tURL" content="$tURL"/>
+		<meta name="description" content="$title - JuliaRoadmap">
 		<script src="$(tURL)js/menu.js"></script>
 		<script src="https://giscus.app/client.js" data-repo="JuliaRoadmap/zh" data-repo-id="R_kgDOHQYI2Q" data-category="General" data-category-id="DIC_kwDOHQYI2c4CO2c9" data-mapping="pathname" data-reactions-enabled="1" data-emit-metadata="0" data-input-position="top" data-theme="preferred_color_scheme" data-lang="zh-CN" crossorigin="anonymous" async></script>
 		<script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.6/require.min.js" data-main="$(tURL)js/main.js"></script>

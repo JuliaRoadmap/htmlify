@@ -1,4 +1,4 @@
-![](https://img.shields.io/badge/version-1.0.1-green) [测试示例](https://juliaroadmap.github.io/docs/meta/doctest.html)
+![](https://img.shields.io/badge/version-1.1.0-green) [测试示例](https://juliaroadmap.github.io/docs/meta/doctest.html)
 
 ## 构建流程
 以下操作应每周/每月一次进行：
